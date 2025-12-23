@@ -2,6 +2,9 @@
 // reflex containers
 // --------------------------------------------------
 
+@use "variables" as *;
+@use "mixins" as *;
+
 .#{$reflex-prefix}container,
 .#{$reflex-prefix}container-full {
     @include box-sizing(border-box);

@@ -1,5 +1,5 @@
 {
-  "name": "reflex-grid",
+  "name": "reflex-grid-wiki",
   "version": "2.0.8",
   "description": "responsive flexbox grid with inline-block legacy support",
   "main": "css/reflex.css",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/leejordan/reflex.git"
+    "url": "https://github.com/hippo-digital/reflex-grid-wiki.git"
   },
   "keywords": [
     "reflex",
@@ -19,12 +19,7 @@
     "grid",
     "SCSS"
   ],
-  "author": "@leejordan",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/leejordan/reflex/issues"
-  },
-  "homepage": "reflexgrid.com",
   "scripts": {
     "build": "npm run build:min && npm run build:max",
     "build:min": "sass --style compressed scss/reflex.scss css/reflex.min.css",
@@ -35,7 +30,7 @@
     "start": "./node_modules/.bin/http-server ./docs -a localhost -c10"
   },
   "devDependencies": {
-    "http-server": "^0.12.3",
-    "sass": "^1.66.1"
+    "http-server": "^14.1.1",
+    "sass": "^1.93.2"
   }
 }
