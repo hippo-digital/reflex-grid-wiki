@@ -6,6 +6,9 @@
 // reflex grid generation mixins
 // --------------------------------------------------
 @use "sass:math";
+@use "sass:map";
+@use "sass:list";
+@use "variables" as *;
 
 @mixin make-reflex-grid($class) {
     @include loop-reflex-columns($reflex-columns, $class, width);
@@ -14,9 +17,9 @@
 @mixin calc-reflex-columns($index, $class, $type) {
     @if $type == width and $index > 0 {
         .#{$reflex-prefix}#{$class}#{$index} {
-            width: percentage(math.div($index, $reflex-columns));
+            width: math.percentage(math.div($index, $reflex-columns));
             @if $legacy-support == true {
-                *width: percentage(math.div($index, $reflex-columns)) - .1; // ie7 css hack
+                *width: math.percentage(math.div($index, $reflex-columns)) - .1; // ie7 css hack
             }
         }
     }
@@ -109,11 +112,11 @@
     $offset: math.div($index, $reflex-columns);
     // convert to percentage only if not zero
     @if $offset != 0 {
-        $offset: percentage($offset);
+        $offset: math.percentage($offset);
     }
     margin-left: $offset;
     @if $legacy-support == true {
-        *margin-left: percentage(math.div($index, $reflex-columns)) - .1; // ie7 css hack
+        *margin-left: math.percentage(math.div($index, $reflex-columns)) - .1; // ie7 css hack
     }
 }
 
@@ -308,7 +311,7 @@
 @mixin responsive-visibility-helpers() {
     @if $visibility-helpers == true {
         // We need to handle xxs and xlg breakpoints differently
-        $map-reflex-breakpoints: map-remove($reflex-breakpoints, xxs, xlg);
+        $map-reflex-breakpoints: map.remove($reflex-breakpoints, xxs, xlg);
 
         .#{$reflex-prefix}hidden-xxs {
             @include media-breakpoint-only('xxs') {
@@ -316,7 +319,7 @@
             }
         }
 
-        @each $bp in map-keys($map-reflex-breakpoints) {
+        @each $bp in map.keys($map-reflex-breakpoints) {
             .#{$reflex-prefix}hidden-#{$bp}-up {
                 @include media-breakpoint-up($bp) {
                     display: none;
@@ -354,16 +357,23 @@
 // >> breakpoint-next(sm) -> md
 // >> breakpoint-next(sm, $breakpoints: (xs: 576px, sm: 768px, md: 992px)) -> md
 // >> breakpoint-next(sm, $breakpoint-names: (xs sm md)) -> md
-@function breakpoint-next($name, $breakpoints: $reflex-breakpoints, $breakpoint-names: map-keys($breakpoints)) {
-    $n: index($breakpoint-names, $name);
-    @return if($n < length($breakpoint-names), nth($breakpoint-names, $n + 1), null);
+@function breakpoint-next($name, $breakpoints: $reflex-breakpoints, $breakpoint-names: map.keys($breakpoints)) {
+    $n: list.index($breakpoint-names, $name);
+    @if $n < list.length($breakpoint-names) {
+        @return list.nth($breakpoint-names, $n + 1);
+    }
+    @return null;
 }
 
 // Minimum breakpoint width. Null for the smallest (first) breakpoint.
 // >> breakpoint-min(sm, (xs: 576px, sm: 768px, md: 992px)) -> 768px
+
 @function breakpoint-min($name, $breakpoints: $reflex-breakpoints) {
-    $min: map-get($breakpoints, $name);
-    @return if($min !=0, $min, null);
+    $min: map.get($breakpoints, $name);
+     @if $min != 0 {
+        @return $min;
+     }
+     @return null;
 }
 
 // Maximum breakpoint width. Null for the largest (last) breakpoint.
@@ -371,7 +381,10 @@
 // >> breakpoint-max(sm, (xs: 576px, sm: 768px, md: 992px)) -> 991px
 @function breakpoint-max($name, $breakpoints: $reflex-breakpoints) {
     $next: breakpoint-next($name, $breakpoints);
-    @return if($next, breakpoint-min($next, $breakpoints) - 1, null);
+    @if $next { 
+        @return breakpoint-min($next, $breakpoints) - 1;
+    }
+    @return null;
 }
 
 // Media of at least the minimum breakpoint width. No query for the smallest breakpoint.
